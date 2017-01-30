@@ -23,8 +23,8 @@
       <file leaf-file-name="Magnet_Game.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Magnet_Game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-71">
-              <caret line="61" column="27" selection-start-line="61" selection-start-column="27" selection-end-line="61" selection-end-column="27" />
+            <state relative-caret-position="214">
+              <caret line="122" column="25" selection-start-line="122" selection-start-column="25" selection-end-line="122" selection-end-column="25" />
               <folding>
                 <element signature="e#109#147#0" expanded="true" />
               </folding>
@@ -49,8 +49,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="50" />
-    <option name="y" value="59" />
+    <option name="x" value="22" />
+    <option name="y" value="45" />
     <option name="width" value="1380" />
     <option name="height" value="765" />
   </component>
@@ -277,6 +277,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="a646c9a7-77d3-4443-9fa6-89ecd34fb883" name="Default" comment="" />
@@ -288,7 +291,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="50" y="59" width="1380" height="765" extended-state="0" />
+    <frame x="22" y="45" width="1380" height="765" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -338,8 +341,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Magnet_Game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-71">
-          <caret line="61" column="27" selection-start-line="61" selection-start-column="27" selection-end-line="61" selection-end-column="27" />
+        <state relative-caret-position="214">
+          <caret line="122" column="25" selection-start-line="122" selection-start-column="25" selection-end-line="122" selection-end-column="25" />
           <folding>
             <element signature="e#109#147#0" expanded="true" />
           </folding>
