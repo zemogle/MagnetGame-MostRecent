@@ -56,14 +56,10 @@ while 1:
         if event.type==pygame.KEYDOWN:
             if event.key==pygame.K_d and p1 + MAGNET_SIZE[0] < 800:
                 move_x += 6
-            else:
-                move_x = 0
             if event.key==pygame.K_a and p1 >0:
                 move_x -= 6
             if event.key==pygame.K_s and p2 + MAGNET_SIZE[1] < 600:
                 move_y += 6
-            else:
-                move_y = 0
             if event.key==pygame.K_w and p2 > 0:
                 move_y -= 6
             if event.key==pygame.K_SPACE:
@@ -114,32 +110,44 @@ while 1:
         move_y = 0
 
     pygame.display.update()
-    '''
+
    #collision code for ball and magnet
     #left collision and below
     if BALL_RIGHT > MAGNET_LEFT and MAGNET_TOP <= BALL_TOP <= MAGNET_BOTTOM:
         x_direction *= -1
-    #left and abover
+    #left and above
     if BALL_RIGHT > MAGNET_LEFT and MAGNET_TOP <= BALL_BOTTOM <= MAGNET_BOTTOM:
         x_direction *= -1
-    #righ collision and below
+    #left
+    if BALL_RIGHT > MAGNET_LEFT and MAGNET_TOP <= (BALL_BOTTOM+BALL_TOP)/2 <= MAGNET_BOTTOM:
+        x_direction *= -1
+    # right
+    if BALL_LEFT > MAGNET_RIGHT and MAGNET_TOP <= (BALL_BOTTOM + BALL_TOP)/ 2 <= MAGNET_BOTTOM:
+        x_direction *= -1
+    #right collision and below
     if BALL_LEFT < MAGNET_RIGHT and MAGNET_TOP <= BALL_TOP <= MAGNET_BOTTOM:
         x_direction *= -1
-    #right and abover
+    #right and above
     if BALL_LEFT < MAGNET_RIGHT and MAGNET_TOP <= BALL_BOTTOM <= MAGNET_BOTTOM:
         x_direction *= -1
+    #top
+    if BALL_BOTTOM > MAGNET_TOP and MAGNET_LEFT <= (BALL_LEFT+BALL_RIGHT)/2 <= MAGNET_RIGHT:
+        y_direction *= -1
     #top collision and to right
     if BALL_BOTTOM > MAGNET_TOP and MAGNET_LEFT <= BALL_LEFT <= MAGNET_RIGHT:
         y_direction *= -1
     #top collision and to left
     if BALL_BOTTOM > MAGNET_TOP and MAGNET_LEFT <= BALL_RIGHT <= MAGNET_RIGHT:
         y_direction *= -1
+    #bottom
+    if BALL_TOP > MAGNET_BOTTOM and MAGNET_LEFT <= (BALL_LEFT+BALL_RIGHT)/2 <= MAGNET_RIGHT:
+        y_direction *= -1
     #bottom collision and to right
     if BALL_TOP < MAGNET_BOTTOM and MAGNET_LEFT <= BALL_LEFT <= MAGNET_RIGHT:
         y_direction *= -1
     #bottom collision and to left
     if BALL_TOP < MAGNET_BOTTOM and MAGNET_LEFT <= BALL_RIGHT <= MAGNET_RIGHT:
-        y_direction *= -1'''
+        y_direction *= -1
 
     '''#collision code for ball and target
     # left collision
