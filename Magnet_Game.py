@@ -1,10 +1,7 @@
 '''Simple Game'''
 
-'''Version two of code will have the ball rebound of magnet depending on its distance'''
-
 import pygame, sys      #import pygame
 import numpy as np
-from PIL import Image
 
 pygame.init()      #initialise pygame
 
@@ -20,13 +17,13 @@ BALL = pygame.image.load("Ball.png").convert_alpha()  #load image of ball
 BALL.set_colorkey([255,255,255])                        #set background to white
 MAGNET= pygame.image.load("Magnet.png").convert_alpha() #load image of magnet
 MAGNET.set_colorkey([255,255,255])
-MAGNET1=MAGNET
 TARGET= pygame.image.load("Target.png").convert_alpha()
 TARGET.set_colorkey([255,255,255])
 
 BALL_SIZE = [22, 22]
 MAGNET_SIZE = [100, 25]
 TARGET_SIZE=[25,25]
+w1,h1 =MAGNET.get_size()
 
 x, y = 0, 0         #define x and y
 
@@ -39,7 +36,10 @@ move_x, move_y = 0, 0  #define velocity of magnet
 pos1, pos2 = [600,400]
 
 myriadProFont=pygame.font.SysFont("Myriad Pro", 48)
-Text=myriadProFont.render("YOU WIN",1,(250,250,250),(250,250,250))
+Text=myriadProFont.render("YOU WIN",1,(250,250,250))
+
+k=8.988e9 #coulombs constant
+q=1
 
 #main game loop
 while 1:
@@ -66,7 +66,8 @@ while 1:
                 move_y -= 6
             if event.key==pygame.K_SPACE:
                 MAGNET1= pygame.transform.rotate(MAGNET, 45)
-                screen.blit(MAGNET1, (300,300))
+                w2,h2=MAGNET1.get_size()
+                screen.blit(MAGNET1,[round(p1-(w1-w2)/2), round(p2-(h1-h2)/2)])
         if event.type==pygame.KEYUP:
             if event.key==pygame.K_d:
                 move_x = 0
@@ -79,9 +80,14 @@ while 1:
 
     x += 1.5*x_direction              #set velocity of ball
     y += 1.5*y_direction
+    BALL_VEL=np.array([x,y])            #vector for ball velocity
 
     p1 += move_x
     p2 += move_y
+
+    #field around magnet based on electric dipole equation
+
+    #then use F=qE to find force on ball to put it in now direction
 
     # define edges of images
     # ball
@@ -131,20 +137,28 @@ while 1:
     if TARGET_TOP <= BALL_BOTTOM <= TARGET_BOTTOM  and (TARGET_LEFT<= BALL_LEFT <= TARGET_RIGHT or TARGET_LEFT<= BALL_RIGHT <= TARGET_RIGHT):
         screen.fill([0, 0, 0])
         screen.blit(Text, (350, 250))
+        pygame.display.update()
     #collide on bottom
     if MAGNET_TOP <= BALL_TOP <= TARGET_BOTTOM and (TARGET_LEFT<= BALL_LEFT <= TARGET_RIGHT or TARGET_LEFT<= BALL_RIGHT <= TARGET_RIGHT):
         screen.fill([0, 0, 0])
         screen.blit(Text, (350, 250))
+        pygame.display.update()
     #collide on left
     if TARGET_LEFT <= BALL_RIGHT <= TARGET_RIGHT and (TARGET_TOP <= BALL_TOP <= TARGET_BOTTOM or TARGET_TOP <= BALL_BOTTOM <= TARGET_BOTTOM):
         screen.fill([0, 0, 0])
         screen.blit(Text, (350, 250))
+        pygame.display.update()
     #collide on left
     if TARGET_LEFT <= BALL_LEFT <= TARGET_RIGHT and (TARGET_TOP <= BALL_TOP <= TARGET_BOTTOM or TARGET_TOP <= BALL_BOTTOM <= TARGET_BOTTOM):
         screen.fill([0, 0, 0])
         screen.blit(Text, (350, 250))
+        pygame.display.update()
 
     pygame.display.update()
+
+
+    '''Field depends on position of magnetic, i.e should move with magnet'''
+    '''Need equation for shape of field in terms of p1 and p2'''
 
 
 
