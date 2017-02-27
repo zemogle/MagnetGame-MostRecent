@@ -4,21 +4,9 @@
 import pygame, sys          #import pygame
 import numpy as np          #import numpy
 
-pygame.init()               #initialise pygame
 
 screen_size = [750, 750]    #define screen size
 
-screen = pygame.display.set_mode(screen_size) #open window
-
-pygame.mouse.set_visible(0) #make mouse invisible
-
-clock = pygame.time.Clock() #initialise clock
-
-'''Load images'''
-BALL = pygame.image.load("Ball.png").convert_alpha()  #load image of ball
-BALL.set_colorkey([255,255,255])                      #set background to white
-MAGNET= pygame.image.load("Magnet.png").convert_alpha() #load image of magnet
-MAGNET.set_colorkey([255,255,255])
 
 '''Define variables'''
 BALL_SIZE = [22, 22]
@@ -31,6 +19,26 @@ x_direction, y_direction = 1, 1   #define x and y direction of ball velocity
 mov_x, mov_y = 0, 0                #define x and y velocity of magnet
 
 p1, p2 = 325, 375                 #define position of magnet
+#define colours
+YELLOW = [0,255,0]
+ORANGE = [0,0,255]
+RED = [255,0,0]
+
+pygame.init()               #initialise pygame
+screen = pygame.display.set_mode(screen_size) #open window
+im1= pygame.Surface(screen.get_size())
+im1.fill((100, 0, 0))
+
+pygame.mouse.set_visible(0) #make mouse invisible
+
+clock = pygame.time.Clock() #initialise clock
+
+'''Load images'''
+BALL = pygame.image.load("Ball.png").convert_alpha()  #load image of ball
+BALL.set_colorkey([255,255,255])                      #set background to white
+MAGNET= pygame.image.load("Magnet.png").convert_alpha() #load image of magnet
+MAGNET.set_colorkey([255,255,255])
+
 
 
 '''Function to find distance between images'''
@@ -42,53 +50,26 @@ def z(x,y):
 def E(z, q, d):  # equation from haliday p564
     ep0 = 1
     pi = 1 #np.pi
-<<<<<<< HEAD
-    return (q * d)/(2*pi*ep0*(z**3))
-=======
-    return (q * d)/(2*pi*ep0*(z))
->>>>>>> origin/master
+    return (q * d)/(2*pi*ep0*z)
 
-#define colours
-YELLOW = [255,255,0]
-ORANGE = [230,126,32]
-RED = [255,0,0]
-
-<<<<<<< HEAD
 
 '''Function to Plot Electric Field'''
-def Plot(Ex,Ey,X_pixel,Y_pixel):
-    Efield=np.sqrt(Ex**2 + Ey**2)
+def Plot(screen):
+    gridx=(np.linspace(0,750,750))
+    gridy=(np.linspace(0,750,750))
+    Efield = np.sqrt(Ex ** 2 + Ey ** 2)
     np.clip(Efield, 0, 70)
-    for i in X_pixel:
-        for j in Y_pixel:
-            if 0 <= Efield <= 25:
-                screen.set_at(X_pixel[i], Y_pixel[j], YELLOW)
-            if 26 <= Efield <= 50:
-                screen.set_at(X_pixel[i], Y_pixel[j], ORANGE)
+    for i in range(750):
+        for j in range(750):
+            Ef = E(np.sqrt(z_x[i] ** 2 + z_y[j] ** 2), q,d)
+            if 0 <= Ef <= 1:
+                screen.set_at([int(gridx[i]), int(gridy[j])], YELLOW)
+            if 1 < Ef <= 10:
+                screen.set_at([int(gridx[i]), int(gridy[j])], ORANGE)
             else:
-                screen.set_at(X_pixel[i], Y_pixel[j], RED)
-=======
+                screen.set_at([int(gridx[i]), int(gridy[j])], RED)
 
-'''Function to Plot Electric Field'''
-def Plot(Ex,Ey,X_pixel,Y_pixel):
-    Efield=np.sqrt(Ex**2 + Ey**2)
-    np.clip(Efield, 0, 70)
-    for i in X_pixel:
-        for j in Y_pixel:
-            if 0 <= Efield <= 25:
-                screen.set_at(X_pixel[i], Y_pixel[j], YELLOW)
-            if 26 <= Efield <= 50:
-                screen.set_at(X_pixel[i], Y_pixel[j], ORANGE)
-            else:
-                screen.set_at(X_pixel[i], Y_pixel[j], RED)
-
->>>>>>> origin/master
-
-
-    return Efield
-
-
-    return Efield
+    return
 
 
 
@@ -100,6 +81,7 @@ while 1:
 
     screen.fill([255,255,255])       #set background to white
 
+    screen.blit(im1, (0, 0))
     screen.blit(BALL, (x, y))        #put images on screen
     screen.blit(MAGNET, (p1, p2))
 
@@ -123,6 +105,7 @@ while 1:
                 mov_y *=0
             if event.key==pygame.K_s:
                 mov_y *=0
+            Plot(screen)
 
 
     x += 1.5*x_direction                      #set velocity of ball
@@ -147,14 +130,8 @@ while 1:
     Y_pixel = np.linspace(0, 750, n)
     DIPOLE_CENTRE_X = DIPOLE_CENTRE[0]* np.ones(n)
     DIPOLE_CENTRE_Y = DIPOLE_CENTRE[1]* np.ones(n)
-<<<<<<< HEAD
-
     z_x = 0.1 * np.floor(DIPOLE_CENTRE_X - X_pixel)
     z_y = 0.1 * np.floor(DIPOLE_CENTRE_Y - Y_pixel)
-=======
-
-    z_x = 00.1 * np.floor(DIPOLE_CENTRE_X - X_pixel)
-    z_y = 00.1 * np.floor(DIPOLE_CENTRE_Y - Y_pixel)
 
     q=1
     k=1
@@ -163,7 +140,6 @@ while 1:
     '''electric field'''
     Ex=E(z_x,q,d)
     Ey=E(z_y,q,d)
-
 
     '''Acceleration'''
     ax = (-q * Ex/m)
@@ -177,20 +153,6 @@ while 1:
     for j in range(750):
         if np.floor(y) == np.floor(Y_pixel[j]):
             y += ay[j]*x_direction
-
-    gridx=(np.linspace(0,750,50))
-    gridy=(np.linspace(0,750,50))
-    Efield = np.sqrt(Ex ** 2 + Ey ** 2)
-    np.clip(Efield, 0, 70)
-    for i in range(50):
-        for j in range(50):
-            if 0 <= Efield[i] <= 1:
-                screen.set_at([int(gridx[i]), int(gridy[j])], YELLOW)
-            if 1 < Efield[i] <= 10:
-                screen.set_at([int(gridx[i]), int(gridy[j])], ORANGE)
-            else:
-                screen.set_at([int(gridx[i]), int(gridy[j])], RED)
->>>>>>> origin/master
 
     q=1
     k=1
@@ -262,5 +224,3 @@ while 1:
         x_direction *= -1
 
     pygame.display.update()
-
-
