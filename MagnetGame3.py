@@ -42,7 +42,7 @@ def z(x,y):
 def E(z, q, d):  # equation from haliday p564
     ep0 = 1
     pi = 1 #np.pi
-    return (q * d)/(2*pi*ep0*(z**3))
+    return (q * d)/(2*pi*ep0*(z))
 
 #define colours
 YELLOW = [255,255,0]
@@ -125,8 +125,8 @@ while 1:
     DIPOLE_CENTRE_X = DIPOLE_CENTRE[0]* np.ones(n)
     DIPOLE_CENTRE_Y = DIPOLE_CENTRE[1]* np.ones(n)
 
-    z_x = 0.1 * np.floor(DIPOLE_CENTRE_X - X_pixel)
-    z_y = 0.1 * np.floor(DIPOLE_CENTRE_Y - Y_pixel)
+    z_x = 00.1 * np.floor(DIPOLE_CENTRE_X - X_pixel)
+    z_y = 00.1 * np.floor(DIPOLE_CENTRE_Y - Y_pixel)
 
     q=1
     k=1
@@ -135,6 +135,7 @@ while 1:
     '''electric field'''
     Ex=E(z_x,q,d)
     Ey=E(z_y,q,d)
+
 
     '''Acceleration'''
     ax = (-q * Ex/m)
@@ -156,13 +157,13 @@ while 1:
     for i in range(50):
         for j in range(50):
             if 0 <= Efield[i] <= 1:
-                screen.set_at([int(gridx[i]), int(gridy[j])], YELLOW)
+                pygame.draw.line(screen,YELLOW,[int(gridx[i]), int(gridy[j])], [int(gridx[i]+5), int(gridy[j]+5)])
             if 1 < Efield[i] <= 10:
-                screen.set_at([int(gridx[i]), int(gridy[j])], ORANGE)
+                pygame.draw.line(screen, ORANGE, [int(gridx[i]), int(gridy[j])],[int(gridx[i]+5), int(gridy[j]+5)])
             else:
-                screen.set_at([int(gridx[i]), int(gridy[j])], RED)
+                pygame.draw.line(screen, RED, [int(gridx[i]), int(gridy[j])], [int(gridx[i] + 5), int(gridy[j] + 5)])
 
-    #define edges of ballaa
+    #define edges of ball
     BALL_LEFT = x
     BALL_RIGHT = x + BALL_SIZE[0]
     BALL_TOP = y
