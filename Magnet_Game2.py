@@ -3,6 +3,7 @@
 '''import libraries'''
 import pygame, sys          #import pygame
 import numpy as np          #import numpy
+from pygame.sprite import Sprite
 
 pygame.init()               #initialise pygame
 
@@ -24,7 +25,7 @@ MAGNET.set_colorkey([255,255,255])
 BALL_SIZE = [22, 22]
 MAGNET_SIZE = [100, 25]
 
-class Ball(pygame.sprite.Sprite):
+class Ball(Sprite):
     """
     This class represents the ball.
     It derives from the "Sprite" class in Pygame.
@@ -34,19 +35,52 @@ class Ball(pygame.sprite.Sprite):
         and its x and y position. """
 
         # Call the parent class (Sprite) constructor
-        super().__init__()
+        Sprite.__init__(self)
         self.image = pygame.image.load("Ball.png").convert_alpha()
-        self.image.set_colorkey([255,255,255])
+        #self.image.set_colorkey([255,255,255])
+        self.rect = self.image.get_rect()
+        self.x = 0
+        self.y = 0
+
+    def blit(self, surface):
+        surface.blit(self.image, (self.x, self.y))
+
+class Magnet(Sprite):
+    """This class represents the magnet.
+    It derives from the Sprie class in Pygame"""
+
+    def __init__(self, color, width, height):
+        Sprite.__init__(self)
+        self.image = pygame.image.load("Magnet.png").convert_alpha()
+        #self.image.set_colorkey([255, 255, 255])
         self.rect = self.image.get_rect()
     def update(self):
         pass
 
-def getsize(objectsize,position):
+
+    def handle_keys(self):
+        key = pygame.key.get_pressed()
+        dist = 6
+        if key[pygame.K_d]:
+            self.rect.x += dist
+        elif key[pygame.K_a]:
+            self.rect.x -= dist
+        if key[pygame.K_w]:
+            self.rect.y += dist
+        elif key[pygame.K_s]:
+            self.rect.y -= dist
+
+    def blit(self, surface):
+        surface.blit(self.image, (self.rect.x, self.rect.y))
+
+
+
+'''def getsize(objectsize,position):
     LEFT=position[0]
     RIGHT=position[0] + objectsize[0]
     TOP=position[1]
     BOTTOM=position[1] + objectsize[1]
-    return [LEFT,RIGHT,TOP,BOTTOM]
+    return [LEFT,RIGHT,TOP,BOTTOM]'''
 
 
 def screenlimit(size, screensize, velocity):
