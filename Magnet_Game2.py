@@ -15,14 +15,31 @@ pygame.mouse.set_visible(0) #make mouse invisible
 clock = pygame.time.Clock() #initialise clock
 
 '''Load images'''
-BALL = pygame.image.load("Ball.png").convert_alpha()  #load image of ball
-BALL.set_colorkey([255,255,255])                      #set background to white
+# BALL = pygame.image.load("Ball.png").convert_alpha()  #load image of ball
+# BALL.set_colorkey([255,255,255])                      #set background to white
 MAGNET= pygame.image.load("Magnet.png").convert_alpha() #load image of magnet
 MAGNET.set_colorkey([255,255,255])
 
 '''Define variables'''
 BALL_SIZE = [22, 22]
 MAGNET_SIZE = [100, 25]
+
+class Ball(pygame.sprite.Sprite):
+    """
+    This class represents the ball.
+    It derives from the "Sprite" class in Pygame.
+    """
+    def __init__(self, color, width, height):
+        """ Constructor. Pass in the color of the block,
+        and its x and y position. """
+
+        # Call the parent class (Sprite) constructor
+        super().__init__()
+        self.image = pygame.image.load("Ball.png").convert_alpha()
+        self.image.set_colorkey([255,255,255])
+        self.rect = self.image.get_rect()
+    def update(self):
+        pass
 
 def getsize(objectsize,position):
     LEFT=position[0]
@@ -55,12 +72,12 @@ RED = [255,0,0]
 q = 1
 k = 1
 m = 1
-myriadProFont=pygame.font.SysFont("Myriad Pro", 48)
-Text=myriadProFont.render("YOU WIN",1,(250,250,250))
-
-MENU = pygame.image.load("MenuButton.png").convert_alpha()
+# myriadProFont=pygame.font.SysFont("Myriad Pro", 48)
+# Text=myriadProFont.render("YOU WIN",1,(250,250,250))
+#
+# MENU = pygame.image.load("MenuButton.png").convert_alpha()
 position = [300, 200]
-MENU_SIZE = [200, 50]
+# MENU_SIZE = [200, 50]
 
 def GetMenuScreen(screen, button, position):
     screen.fill([255, 255, 255])
@@ -150,6 +167,11 @@ def Collide(magsize, ballsize, velocity):
         3] <= magsize[3]:
         velocity[0] *= -1
 
+balls = pygame.sprite.Group()
+
+ball = Ball()
+
+balls.update()
 
 
 '''Main game loop'''
@@ -211,7 +233,7 @@ while 1:
             y += ay[j]*x_direction
 
     #plot
-    Plot(Ex,Ey,X_pixel,Y_pixel)
+    # Plot(Ex,Ey,X_pixel,Y_pixel)
 
     #define edges of balls
     BALL_LEFT = x
@@ -234,5 +256,3 @@ while 1:
     Collide(getsize(MAGNET_SIZE,[p1,p2]),getsize(BALL_SIZE,[x,y]), [x_direction,y_direction])
 
     pygame.display.update()
-
-
