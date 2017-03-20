@@ -6,13 +6,13 @@ import numpy as np          #import numpy
 
 pygame.init()               #initialise pygame
 
-screen_size = [750, 750]    #define screen size
-
-screen = pygame.display.set_mode(screen_size) #open window
-
 pygame.mouse.set_visible(0) #make mouse invisible
 
+screen=pygame.display.set_mode((750,750))
 clock = pygame.time.Clock() #initialise clock
+
+im1=pygame.Surface(screen.get__size())
+im1.fill((255,255,255))
 
 '''Load images'''
 BALL = pygame.image.load("Ball.png").convert_alpha()  #load image of ball
@@ -28,7 +28,7 @@ x, y = 0, 0                       #define x and y position of Ball
 
 x_direction, y_direction = 1, 1   #define x and y direction of ball velocity
 
-mov_x, mov_y = 0, 0                #define x and y velocity of magnet
+mov_x, mov_y = 0, 0               #define x and y velocity of magnet
 
 p1, p2 = 325, 375                 #define position of magnet
 
@@ -66,8 +66,6 @@ def Plot(Ex,Ey,X_pixel,Y_pixel):
 
 
     return Efield
-
-
 
 
 '''Main game loop'''
@@ -136,11 +134,9 @@ while 1:
     Ex=E(z_x,q,d)
     Ey=E(z_y,q,d)
 
-
     '''Acceleration'''
     ax = (-q * Ex/m)
     ay = (-q*Ey/m)
-
 
     for i in range(750):
         if np.floor(x) == np.floor(X_pixel[i]):
@@ -157,11 +153,11 @@ while 1:
     for i in range(50):
         for j in range(50):
             if 0 <= Efield[i] <= 1:
-                pygame.draw.line(screen,YELLOW,[int(gridx[i]), int(gridy[j])], [int(gridx[i]+5), int(gridy[j]+5)])
+                pygame.draw.line(screen,YELLOW,[int(gridx[i]), int(gridy[j])], [int(gridx[i]), int(gridy[j])])
             if 1 < Efield[i] <= 10:
-                pygame.draw.line(screen, ORANGE, [int(gridx[i]), int(gridy[j])],[int(gridx[i]+5), int(gridy[j]+5)])
+                pygame.draw.line(screen, ORANGE, [int(gridx[i]), int(gridy[j])],[int(gridx[i]), int(gridy[j])])
             else:
-                pygame.draw.line(screen, RED, [int(gridx[i]), int(gridy[j])], [int(gridx[i] + 5), int(gridy[j] + 5)])
+                pygame.draw.line(screen, RED, [int(gridx[i]), int(gridy[j])], [int(gridx[i] ), int(gridy[j] )])
 
     #define edges of ball
     BALL_LEFT = x

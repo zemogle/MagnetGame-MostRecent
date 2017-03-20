@@ -74,15 +74,9 @@ while 1:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:sys.exit()     #if close pressed then quit game
 
-<<<<<<< HEAD
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1 and position[0] <= Cx <= position[0] + MENU_SIZE[0] and position[1] <= Cy <= position[1] + MENU_SIZE[1]:
                 GetGameScreen(screen, BALL, [0, 0], MAGNET, [p1, p2], TARGET, [pos1, pos2])
-=======
-        if event.type==pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and position[0] <= Cx <= position[0] + MENU_SIZE[0] and position[1] <= Cy <= position[1] + MENU_SIZE[1]:
-                GetGameScreen(screen,BALL, [0,0], MAGNET,[p1,p2],TARGET,[pos1,pos2])
->>>>>>> origin/master
 
         if event.type==pygame.KEYDOWN:
             if event.key==pygame.K_d and p1 + MAGNET_SIZE[0] < 800:
@@ -113,7 +107,6 @@ while 1:
             p1 += move_x
             p2 += move_y
 
-    print(p1)
     #field around magnet based on electric dipole equation
 
     #then use F=qE to find force on ball to put it in now direction
