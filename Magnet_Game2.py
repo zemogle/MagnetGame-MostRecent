@@ -14,12 +14,6 @@ pygame.mouse.set_visible(0) #make mouse invisible
 
 clock = pygame.time.Clock() #initialise clock
 
-'''Load images'''
-# BALL = pygame.image.load("Ball.png").convert_alpha()  #load image of ball
-# BALL.set_colorkey([255,255,255])                      #set background to white
-MAGNET= pygame.image.load("Magnet.png").convert_alpha() #load image of magnet
-MAGNET.set_colorkey([255,255,255])
-
 '''Define variables'''
 BALL_SIZE = [22, 22]
 MAGNET_SIZE = [100, 25]
@@ -36,17 +30,47 @@ class Ball(pygame.sprite.Sprite):
         # Call the parent class (Sprite) constructor
         super().__init__()
         self.image = pygame.image.load("Ball.png").convert_alpha()
-        self.image.set_colorkey([255,255,255])
+        #self.image.set_colorkey([255,255,255])
         self.rect = self.image.get_rect()
-    def update(self):
-        pass
+        self.x = 0
+        self.y = 0
 
-def getsize(objectsize,position):
+    def blit(self, surface):
+        surface.blit(self.image, (self.x, self.y))
+
+class Magnet(pygame.sprite.Sprite):
+    """This class represents the magnet.
+    It derives from the Sprie class in Pygame"""
+
+    def __init__(self, color, width, height):
+        super().__init__()
+        self.image = pygame.image.load("Magnet.png").convert_alpha
+        #self.image.set_colorkey([255, 255, 255])
+        self.rect = self.image.get_rect()
+
+    def handle_keys(self):
+        key = pygame.key.get_pressed()
+        dist = 6
+        if key[pygame.K_d]:
+            self.x += dist
+        elif key[pygame.K_a]:
+            self.x -= dist
+        if key[pygame.K_w]:
+            self.y += dist
+        elif key[pygame.K_s]:
+            self.y -= dist
+
+    def blit(self, surface):
+        surface.blit(self.image, (self.x, self.y))
+
+
+
+'''def getsize(objectsize,position):
     LEFT=position[0]
     RIGHT=position[0] + objectsize[0]
     TOP=position[1]
     BOTTOM=position[1] + objectsize[1]
-    return [LEFT,RIGHT,TOP,BOTTOM]
+    return [LEFT,RIGHT,TOP,BOTTOM]'''
 
 
 def screenlimit(size, screensize, velocity):
@@ -167,12 +191,11 @@ def Collide(magsize, ballsize, velocity):
         3] <= magsize[3]:
         velocity[0] *= -1
 
-balls = pygame.sprite.Group()
 
-ball = Ball()
 
-balls.update()
+BALL = Ball([255,255,255], BALL_SIZE[0], BALL_SIZE[1])
 
+MAGNET = Magnet([255,255,255], MAGNET_SIZE[0], MAGNET_SIZE[1])
 
 '''Main game loop'''
 while 1:
@@ -181,18 +204,14 @@ while 1:
 
     screen.fill([255,255,255])       #set background to white
 
-    screen.blit(BALL, (x, y))        #put images on screen
-    screen.blit(MAGNET, (p1, p2))
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:sys.exit()     #if close pressed then quit game
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and position[0] <= Cx <= position[0] + MENU_SIZE[0] and position[1] <= Cy <= position[1] + MENU_SIZE[1]:
-                GetGameScreen(screen, BALL, [0, 0], MAGNET, [p1, p2], TARGET, [pos1, pos2])
+    MAGNET.blit(screen)
+    BALL.blit(screen)
+    MAGNET.handle_keys()
 
-        MovMag(getsize(MAGNET_SIZE,[p1,p2]), [mov_x,mov_y], screen_size)
-
+    '''
     x += 1.5*x_direction                      #set velocity of ball
     y += 1.5*y_direction
 
@@ -219,7 +238,7 @@ while 1:
     z_x = 0.1 * np.floor(DIPOLE_CENTRE_X - X_pixel)
     z_y = 0.1 * np.floor(DIPOLE_CENTRE_Y - Y_pixel)
 
-    '''Acceleration'''
+    #Acceleration
     ax = accel(q,E(z_x,q,d),m)
     ay = accel(q,E(z_y,q,d),m)
 
@@ -254,5 +273,5 @@ while 1:
         y_direction *= -1
 
     Collide(getsize(MAGNET_SIZE,[p1,p2]),getsize(BALL_SIZE,[x,y]), [x_direction,y_direction])
-
+    '''
     pygame.display.update()
