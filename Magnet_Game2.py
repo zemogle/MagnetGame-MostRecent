@@ -23,30 +23,50 @@ class Ball(pygame.sprite.Sprite):
     This class represents the ball.
     It derives from the "Sprite" class in Pygame.
     """
-    def __init__(self, color, width, height):
+    def __init__(self, color, width, height, xpos,ypos):
         """ Constructor. Pass in the color of the block,
         and its x and y position. """
 
         # Call the parent class (Sprite) constructor
         super().__init__()
         self.image = pygame.image.load("Ball.png").convert_alpha()
-        #self.image.set_colorkey([255,255,255])
+        self.image.set_colorkey([255,255,255])
         self.rect = self.image.get_rect()
         self.x = 0
         self.y = 0
+        self.x_direction = 1
+        self.y_direction = 1
 
-    def blit(self, surface):
+    def render(self, surface):
         surface.blit(self.image, (self.x, self.y))
+
+    def update(self):
+        self.x += self.x_direction
+        self.y += self.y_direction
+
+    def limit(self, screensize, objectsize):
+        if self.x  + objectsize[0] >= screensize[0] or self.x <= 0 :
+            self.x_direction *= -1
+        if self.y + objectsize[1] >= screensize[1] or self.y <= 0:
+            self.y_direction *= -1
+
+    def collide(self, sprite):
+        if pygame.sprite.spritecollide(self, sprite, False):
+            self.x_direction *= -1
+            self.y_direction *= -1
+
 
 class Magnet(pygame.sprite.Sprite):
     """This class represents the magnet.
-    It derives from the Sprie class in Pygame"""
+    It derives from the Sprite class in Pygame"""
 
-    def __init__(self, color, width, height):
+    def __init__(self, color, width, height, xpos,ypos):
         super().__init__()
-        self.image = pygame.image.load("Magnet.png").convert_alpha
-        #self.image.set_colorkey([255, 255, 255])
+        self.image = pygame.image.load("Magnet.png").convert_alpha()
+        self.image.set_colorkey([255, 255, 255])
         self.rect = self.image.get_rect()
+        self.x = xpos
+        self.y = ypos
 
     def handle_keys(self):
         key = pygame.key.get_pressed()
@@ -55,13 +75,19 @@ class Magnet(pygame.sprite.Sprite):
             self.x += dist
         elif key[pygame.K_a]:
             self.x -= dist
-        if key[pygame.K_w]:
+        if key[pygame.K_s]:
             self.y += dist
-        elif key[pygame.K_s]:
+        elif key[pygame.K_w]:
             self.y -= dist
 
-    def blit(self, surface):
+    def render(self, surface):
         surface.blit(self.image, (self.x, self.y))
+
+    def limit(self, screensize, objectsize):
+        if self.x + objectsize[0] >= screensize[0] or self.x <= 0:
+            self.x += 0
+        if self.y + objectsize[1] >= screensize[1] or self.y <= 0:
+            self.y += 0
 
 
 
@@ -193,9 +219,19 @@ def Collide(magsize, ballsize, velocity):
 
 
 
-BALL = Ball([255,255,255], BALL_SIZE[0], BALL_SIZE[1])
+BALL = Ball([255,255,255], BALL_SIZE[0], BALL_SIZE[1],x,y)
 
-MAGNET = Magnet([255,255,255], MAGNET_SIZE[0], MAGNET_SIZE[1])
+MAGNET = Magnet([255,255,255], MAGNET_SIZE[0], MAGNET_SIZE[1], p1,p2)
+
+magnet_list = pygame.sprite.Group()
+magnet_list.add(MAGNET)
+ball_list = pygame.sprite.Group()
+ball_list.add(BALL)
+all_sprites = pygame.sprite.Group()
+all_sprites.add(MAGNET)
+all_sprites.add(BALL)
+
+
 
 '''Main game loop'''
 while 1:
@@ -207,9 +243,13 @@ while 1:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:sys.exit()     #if close pressed then quit game
 
-    MAGNET.blit(screen)
-    BALL.blit(screen)
+    MAGNET.render(screen)
+    BALL.render(screen)
     MAGNET.handle_keys()
+    BALL.update()
+    BALL.limit(BALL_SIZE,screen_size)
+    MAGNET.limit(MAGNET_SIZE,screen_size)
+    BALL.collide(MAGNET)
 
     '''
     x += 1.5*x_direction                      #set velocity of ball
