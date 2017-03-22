@@ -18,16 +18,32 @@ clock = pygame.time.Clock() #initialise clock
 BALL_SIZE = [22, 22]
 MAGNET_SIZE = [100, 25]
 
-class Ball(pygame.sprite.Sprite):
-    """
-    This class represents the ball.
-    It derives from the "Sprite" class in Pygame.
-    """
-    def __init__(self, color, width, height, xpos,ypos):
-        """ Constructor. Pass in the color of the block,
-        and its x and y position. """
+x, y = 0, 0                       #define x and y position of Ball
 
-        # Call the parent class (Sprite) constructor
+x_direction, y_direction = 1, 1   #define x and y direction of ball velocity
+
+mov_x, mov_y = 0, 0                #define x and y velocity of magnet
+
+p1, p2 = 325, 375                 #define position of magnet
+
+#define colours
+YELLOW = [255,255,0]
+ORANGE = [230,126,32]
+RED = [255,0,0]
+
+q = 1
+k = 1
+m = 1
+# myriadProFont=pygame.font.SysFont("Myriad Pro", 48)
+# Text=myriadProFont.render("YOU WIN",1,(250,250,250))
+#
+# MENU = pygame.image.load("MenuButton.png").convert_alpha()
+position = [300, 200]
+# MENU_SIZE = [200, 50]
+
+class Ball(pygame.sprite.Sprite):
+
+    def __init__(self, color, width, height, xpos,ypos):
         super().__init__()
         self.image = pygame.image.load("Ball.png").convert_alpha()
         self.image.set_colorkey([255,255,255])
@@ -57,8 +73,6 @@ class Ball(pygame.sprite.Sprite):
 
 
 class Magnet(pygame.sprite.Sprite):
-    """This class represents the magnet.
-    It derives from the Sprite class in Pygame"""
 
     def __init__(self, color, width, height, xpos,ypos):
         super().__init__()
@@ -88,47 +102,7 @@ class Magnet(pygame.sprite.Sprite):
             self.x += 0
         if self.y + objectsize[1] >= screensize[1] or self.y <= 0:
             self.y += 0
-
-
-
-'''def getsize(objectsize,position):
-    LEFT=position[0]
-    RIGHT=position[0] + objectsize[0]
-    TOP=position[1]
-    BOTTOM=position[1] + objectsize[1]
-    return [LEFT,RIGHT,TOP,BOTTOM]'''
-
-
-def screenlimit(size, screensize, velocity):
-    if  size[1] >= screensize[0] or size[0] <= 0:
-        return velocity[0] == 0
-    if size[3] >= screensize[1] or size[2] <= 0:
-        return velocity[1] == 0
-
-
-x, y = 0, 0                       #define x and y position of Ball
-
-x_direction, y_direction = 1, 1   #define x and y direction of ball velocity
-
-mov_x, mov_y = 0, 0                #define x and y velocity of magnet
-
-p1, p2 = 325, 375                 #define position of magnet
-
-#define colours
-YELLOW = [255,255,0]
-ORANGE = [230,126,32]
-RED = [255,0,0]
-
-q = 1
-k = 1
-m = 1
-# myriadProFont=pygame.font.SysFont("Myriad Pro", 48)
-# Text=myriadProFont.render("YOU WIN",1,(250,250,250))
-#
-# MENU = pygame.image.load("MenuButton.png").convert_alpha()
-position = [300, 200]
-# MENU_SIZE = [200, 50]
-
+'''
 def GetMenuScreen(screen, button, position):
     screen.fill([255, 255, 255])
     screen.blit(button, position)
@@ -146,21 +120,12 @@ def GetWinScreen(screen, text,position, button1, position1, button2, position2):
     screen.blit(text, position)
     screen.blit(button1, position1)
     screen.blit(button2, position2)
+'''
 
-
-'''Function to find distance between images'''
-def z(x,y):
-    dif = abs(y-x)
-    return dif
-
-'''Function to find electric field'''
-def E(z, q, d):  # equation from haliday p564
+def accel(z,q, d, m):
     ep0 = 1
     pi = 1 #np.pi
-    return (q * d)/(2*pi*ep0*(z**3))
-
-
-def accel(q, E, m):
+    E = (q * d)/(2*pi*ep0*(z**3)) #E field
     return -q * E / m
 
 
@@ -177,46 +142,6 @@ def Plot(Ex,Ey,X_pixel,Y_pixel):
             else:
                 screen.set_at(X_pixel[i], Y_pixel[j], RED)
     return Efield
-
-def MovMag(objectsize, velocity, screensize):
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_d and objectsize[1] < screen_size[0]:
-            velocity[0] += 6
-        if event.key == pygame.K_a and objectsize[0] > 0:
-            velocity[0] -= 6
-        if event.key == pygame.K_s and objectsize[3] < screen_size[1]:
-            velocity[1] += 6
-        if event.key == pygame.K_w and objectsize[2] > 0:
-            velocity[1] -= 6
-    if event.type == pygame.KEYUP:
-        if event.key == pygame.K_d:
-            velocity[0] *= 0
-        if event.key == pygame.K_a:
-            velocity[0] *= 0
-        if event.key == pygame.K_w:
-            velocity[1] *= 0
-        if event.key == pygame.K_s:
-            velocity[1] *= 0
-
-
-def Collide(magsize, ballsize, velocity):
-    # collide on top
-    if magsize[2] <= ballsize[3] <= magsize[3] and magsize[0] <= ballsize[0] <= magsize[1] or magsize[0] <= ballsize[
-        1] <= magsize[1]:
-        velocity[1] *= -1
-    # collide on bottom
-    if magsize[2] <= ballsize[2] <= magsize[3] and magsize[0] <= ballsize[0] <= magsize[1] or magsize[0] <= ballsize[
-        1] <= magsize[1]:
-        velocity[1] *= -1
-    # collide on left
-    if magsize[0] <= ballsize[1] <= magsize[1] and magsize[2] <= ballsize[2] <= magsize[3] or magsize[2] <= ballsize[
-        3] <= magsize[3]:
-        velocity[0] *= -1
-    # collide on left
-    if magsize[0] <= ballsize[0] <= magsize[1] and magsize[2] <= ballsize[2] <= magsize[3] or magsize[2] <= ballsize[
-        3] <= magsize[3]:
-        velocity[0] *= -1
-
 
 
 BALL = Ball([255,255,255], BALL_SIZE[0], BALL_SIZE[1],x,y)
@@ -252,15 +177,6 @@ while 1:
     BALL.collide(MAGNET)
 
     '''
-    x += 1.5*x_direction                      #set velocity of ball
-    y += 1.5*y_direction
-
-    # define edges of magnet
-    MAGNET_LEFT = p1
-    MAGNET_RIGHT = p1 + MAGNET_SIZE[0]
-    MAGNET_TOP = p2
-    MAGNET_BOTTOM = p2 + MAGNET_SIZE[1]
-
     DIPOLE_CENTRE = [(MAGNET_LEFT + MAGNET_RIGHT)/2, (MAGNET_BOTTOM + MAGNET_TOP)/2]
 
     #move magnet
@@ -279,8 +195,8 @@ while 1:
     z_y = 0.1 * np.floor(DIPOLE_CENTRE_Y - Y_pixel)
 
     #Acceleration
-    ax = accel(q,E(z_x,q,d),m)
-    ay = accel(q,E(z_y,q,d),m)
+    ax = accel(z_x,q,d,m)
+    ay = accel(z_y,q,d,m)
 
 
     for i in range(750):
@@ -294,24 +210,5 @@ while 1:
     #plot
     # Plot(Ex,Ey,X_pixel,Y_pixel)
 
-    #define edges of balls
-    BALL_LEFT = x
-    BALL_RIGHT = x + BALL_SIZE[0]
-    BALL_TOP = y
-    BALL_BOTTOM = y + BALL_SIZE[1]
-    B_CENTRE_X = (BALL_LEFT+BALL_RIGHT)/2
-    B_CENTRE_Y = (BALL_TOP+BALL_BOTTOM)/2
-    BALL_CENTRE = [B_CENTRE_X, B_CENTRE_Y]
-
-    screenlimit(getsize(MAGNET_SIZE, [p1,p2]), screen_size, [mov_x,mov_y])
-
-
-    #stop ball going off screen
-    if BALL_RIGHT >= 750 or BALL_LEFT <= 0:
-        x_direction *= -1
-    if BALL_BOTTOM >= 750 or BALL_TOP <= 0:
-        y_direction *= -1
-
-    Collide(getsize(MAGNET_SIZE,[p1,p2]),getsize(BALL_SIZE,[x,y]), [x_direction,y_direction])
     '''
     pygame.display.update()
