@@ -31,9 +31,12 @@ YELLOW = [255,255,0]
 ORANGE = [230,126,32]
 RED = [255,0,0]
 
-q = 1
+q = 1e4
+d=50
 k = 1
 m = 1
+ep0 = 1
+pi = 1  # np.pi
 # myriadProFont=pygame.font.SysFont("Myriad Pro", 48)
 # Text=myriadProFont.render("YOU WIN",1,(250,250,250))
 #
@@ -48,26 +51,40 @@ class Ball(pygame.sprite.Sprite):
         self.image = pygame.image.load("Ball.png").convert_alpha()
         self.image.set_colorkey([255,255,255])
         self.rect = self.image.get_rect()
-        self.x = 0
-        self.y = 0
+        self.rect.x = 0
+        self.rect.y = 0
         self.x_direction = 1
         self.y_direction = 1
+        self.centreX = (self.rect.x + (self.rect.x + BALL_SIZE[0])) / 2.
+        self.centreY = (self.rect.y + (self.rect.y + BALL_SIZE[1])) / 2.
 
     def render(self, surface):
-        surface.blit(self.image, (self.x, self.y))
+        surface.blit(self.image, (self.rect.x, self.rect.y))
 
-    def update(self):
-        self.x += self.x_direction
-        self.y += self.y_direction
+    #def update(self):
+        #self.rect.x += self.x_direction
+        #self.rect.y += self.y_direction
+
+    def accel(self, sprite_list, q, d, m):
+        for magnet in sprite_list:
+            self.centreX = (self.rect.x + (self.rect.x + BALL_SIZE[0])) / 2.
+            self.centreY = (self.rect.y + (self.rect.y + BALL_SIZE[1])) / 2.
+            z = np.sqrt(abs(self.centreX - magnet.centreX)**2 + (self.centreY - magnet.centreY)**2) #use pythag
+            E = (q * d) / (2 * pi * ep0 * (z ** 3))  # E field
+            a =  q * E / m
+            a = max(0, min(a,5))
+            print(a)
+            self.rect.x += a*self.x_direction
+            self.rect.y += a*self.y_direction
 
     def limit(self, screensize, objectsize):
-        if self.x  + objectsize[0] >= screensize[0] or self.x <= 0 :
+        if self.rect.x  + objectsize[0] > screensize[0] or self.rect.x < 0 :
             self.x_direction *= -1
-        if self.y + objectsize[1] >= screensize[1] or self.y <= 0:
+        if self.rect.y + objectsize[1] > screensize[1] or self.rect.y < 0:
             self.y_direction *= -1
 
-    def collide(self, sprite):
-        if pygame.sprite.spritecollide(self, sprite, False):
+    def collide(self, sprite_list):
+        if pygame.sprite.spritecollide(self,sprite_list,False):
             self.x_direction *= -1
             self.y_direction *= -1
 
@@ -79,29 +96,27 @@ class Magnet(pygame.sprite.Sprite):
         self.image = pygame.image.load("Magnet.png").convert_alpha()
         self.image.set_colorkey([255, 255, 255])
         self.rect = self.image.get_rect()
-        self.x = xpos
-        self.y = ypos
+        self.rect.x = xpos
+        self.rect.y = ypos
+        self.centreX = (self.rect.x + (self.rect.x + MAGNET_SIZE[0])) / 2
+        self.centreY = (self.rect.y + (self.rect.y + MAGNET_SIZE[1])) / 2
 
     def handle_keys(self):
         key = pygame.key.get_pressed()
         dist = 6
         if key[pygame.K_d]:
-            self.x += dist
+            self.rect.x += dist
         elif key[pygame.K_a]:
-            self.x -= dist
+            self.rect.x -= dist
         if key[pygame.K_s]:
-            self.y += dist
+            self.rect.y += dist
         elif key[pygame.K_w]:
-            self.y -= dist
+            self.rect.y -= dist
+        self.rect.x = max(0,min(self.rect.x, screen_size[0]-MAGNET_SIZE[0]))
+        self.rect.y = max(0, min(self.rect.y, screen_size[1]- MAGNET_SIZE[1]))
 
     def render(self, surface):
-        surface.blit(self.image, (self.x, self.y))
-
-    def limit(self, screensize, objectsize):
-        if self.x + objectsize[0] >= screensize[0] or self.x <= 0:
-            self.x += 0
-        if self.y + objectsize[1] >= screensize[1] or self.y <= 0:
-            self.y += 0
+        surface.blit(self.image, (self.rect.x, self.rect.y))
 '''
 def GetMenuScreen(screen, button, position):
     screen.fill([255, 255, 255])
@@ -121,13 +136,6 @@ def GetWinScreen(screen, text,position, button1, position1, button2, position2):
     screen.blit(button1, position1)
     screen.blit(button2, position2)
 '''
-
-def accel(z,q, d, m):
-    ep0 = 1
-    pi = 1 #np.pi
-    E = (q * d)/(2*pi*ep0*(z**3)) #E field
-    return -q * E / m
-
 
 '''Function to Plot Electric Field'''
 def Plot(Ex,Ey,X_pixel,Y_pixel):
@@ -152,11 +160,6 @@ magnet_list = pygame.sprite.Group()
 magnet_list.add(MAGNET)
 ball_list = pygame.sprite.Group()
 ball_list.add(BALL)
-all_sprites = pygame.sprite.Group()
-all_sprites.add(MAGNET)
-all_sprites.add(BALL)
-
-
 
 '''Main game loop'''
 while 1:
@@ -171,44 +174,8 @@ while 1:
     MAGNET.render(screen)
     BALL.render(screen)
     MAGNET.handle_keys()
-    BALL.update()
-    BALL.limit(BALL_SIZE,screen_size)
-    MAGNET.limit(MAGNET_SIZE,screen_size)
-    BALL.collide(MAGNET)
+    BALL.accel(magnet_list,q,d,m)
+    BALL.limit(screen_size,BALL_SIZE)
+    BALL.collide(magnet_list)
 
-    '''
-    DIPOLE_CENTRE = [(MAGNET_LEFT + MAGNET_RIGHT)/2, (MAGNET_BOTTOM + MAGNET_TOP)/2]
-
-    #move magnet
-    p1 += mov_x
-    p2 += mov_y
-
-    n = 750
-    d = 25
-
-    X_pixel = np.linspace(0, 750, n)
-    Y_pixel = np.linspace(0, 750, n)
-    DIPOLE_CENTRE_X = DIPOLE_CENTRE[0]* np.ones(n)
-    DIPOLE_CENTRE_Y = DIPOLE_CENTRE[1]* np.ones(n)
-
-    z_x = 0.1 * np.floor(DIPOLE_CENTRE_X - X_pixel)
-    z_y = 0.1 * np.floor(DIPOLE_CENTRE_Y - Y_pixel)
-
-    #Acceleration
-    ax = accel(z_x,q,d,m)
-    ay = accel(z_y,q,d,m)
-
-
-    for i in range(750):
-        if np.floor(x) == np.floor(X_pixel[i]):
-            x += ax[i]*x_direction
-
-    for j in range(750):
-        if np.floor(y) == np.floor(Y_pixel[j]):
-            y += ay[j]*x_direction
-
-    #plot
-    # Plot(Ex,Ey,X_pixel,Y_pixel)
-
-    '''
     pygame.display.update()
