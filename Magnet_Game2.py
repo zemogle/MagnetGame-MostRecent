@@ -92,6 +92,22 @@ class Ball(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(self,sprite_list,False):
             self.x_direction *= -1
             self.y_direction *= -1
+    def bounce(self):
+        if self.rect.x > screensize[0] - objectsize[0]:
+            self.rect.x = 2*(screensize[0] - objectsize[0]) - self.rect.x
+            self.x_direction *= -1
+
+        elif self.rect.x < objectsize[0]:
+            self.rect.x = self.rect.x
+            self.x_direction *= -1
+
+        if self.rect.y > screensize[1] - objectsize[1]:
+            self.rect.y = 2*(screensize[1] - objectsize[1]) - self.rect.y
+            self.y_direction *= -1
+
+        elif self.rect.y < objectsize[1]:
+            self.rect.y = 2*objectsize[1] - self.rect.y
+            self.y_direction *= -1
 
 
 class Magnet(pygame.sprite.Sprite):
