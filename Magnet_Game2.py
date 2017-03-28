@@ -32,6 +32,7 @@ ORANGE = [230,126,32]
 RED = [255,0,0]
 
 q = 1e4
+q1=300
 d=50
 k = 1
 m = 1
@@ -62,26 +63,29 @@ class Ball(pygame.sprite.Sprite):
         surface.blit(self.image, (self.rect.x, self.rect.y))
 
     #def update(self):
-        #self.rect.x += self.x_direction
-        #self.rect.y += self.y_direction
+       # self.rect.x += self.x_direction
+       # self.rect.y += self.y_direction
+
 
     def accel(self, sprite_list, q, d, m):
         for magnet in sprite_list:
             self.centreX = (self.rect.x + (self.rect.x + BALL_SIZE[0])) / 2.
             self.centreY = (self.rect.y + (self.rect.y + BALL_SIZE[1])) / 2.
             z = np.sqrt(abs(self.centreX - magnet.centreX)**2 + (self.centreY - magnet.centreY)**2) #use pythag
+            z = max(25, min(z, 350))
             E = (q * d) / (2 * pi * ep0 * (z ** 3))  # E field
-            a =  q * E / m
-            a = max(0, min(a,5))
-            print(a)
+            a =   q1 * E / m
+            #a = max(0, min(a,5))
             self.rect.x += a*self.x_direction
             self.rect.y += a*self.y_direction
+            self.rect.x = max(0,min(self.rect.x, screen_size[0]-BALL_SIZE[0]))
+            self.rect.y = max(0, min(self.rect.y, screen_size[1]- BALL_SIZE[1]))
 
-    def limit(self, screensize, objectsize):
+    '''def limit(self, screensize, objectsize):
         if self.rect.x  + objectsize[0] > screensize[0] or self.rect.x < 0 :
             self.x_direction *= -1
         if self.rect.y + objectsize[1] > screensize[1] or self.rect.y < 0:
-            self.y_direction *= -1
+            self.y_direction *= -1'''
 
     def collide(self, sprite_list):
         if pygame.sprite.spritecollide(self,sprite_list,False):
@@ -112,6 +116,8 @@ class Magnet(pygame.sprite.Sprite):
             self.rect.y += dist
         elif key[pygame.K_w]:
             self.rect.y -= dist
+        self.centreX = (self.rect.x + (self.rect.x + MAGNET_SIZE[0])) / 2
+        self.centreY = (self.rect.y + (self.rect.y + MAGNET_SIZE[1])) / 2
         self.rect.x = max(0,min(self.rect.x, screen_size[0]-MAGNET_SIZE[0]))
         self.rect.y = max(0, min(self.rect.y, screen_size[1]- MAGNET_SIZE[1]))
 
@@ -174,8 +180,8 @@ while 1:
     MAGNET.render(screen)
     BALL.render(screen)
     MAGNET.handle_keys()
+    #BALL.update()
     BALL.accel(magnet_list,q,d,m)
-    BALL.limit(screen_size,BALL_SIZE)
     BALL.collide(magnet_list)
 
     pygame.display.update()
